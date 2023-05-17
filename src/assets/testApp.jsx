@@ -1,46 +1,114 @@
-import { useState } from 'react'
-import { useTimer } from 'react-timer-hook'
+import React, { useState, useEffect, useRef } from "react";
 
-function MyTimer({expiryTimestamp}){
-  const {seconds, minutes, restart, isRunning, start, pause} = useTimer({expiryTimestamp, autoStart:false , onExpire: ()=> console.warn('onExpire classed')})
+function App() {
 
   const [breakLength, setBreakLength] = useState(5)
   const [sessionLength, setSessionLength] = useState(25)
-  
+  const [isRunning, setIsRunning] = useState(false)
+  const [seconds, setSeconds] = useState(0)
+  const [minutes, setMinutes] = useState(25)
+  const [onBreak, setOnBreak] = useState(false)
+  const [sessionOrBreak, setSessionOrBreak] = useState(true)
+  const [startOrStop, setStartOrStop] = useState(false)
 
-  function resetTimers(){
-    const time = new Date()
-    time.setSeconds(time.getSeconds() + 1500)
-    restart(time)
+  const audioRef = useRef(null)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isRunning) {
+        //seconds drop to nil, resets to 60 seconds and the subtracts on every second
+        if (seconds === 0) {
+          setSeconds(60)
+          setSeconds(prevSeconds => prevSeconds - 1)
+          //if seconds = nil and minutes are greater then nil then subtract one from minutes
+          if (minutes > 0) {
+            setMinutes(prevMinutes => prevMinutes - 1)
+          //if seconds = nil
+          } else if (seconds === 0 && minutes === 0 ) {
+            audioRef.current.play()
+            setMinutes(0)
+            setSeconds(0)
+            setIsRunning(false)
+            setOnBreak(true)
+            setSessionOrBreak(false)
+            setMinutes(breakLength)
+          }
+        } else {
+          setSeconds(prevSeconds => prevSeconds - 1)
+        }
+      } else if (onBreak) {
+        if (seconds === 0) {
+          setSeconds(60)
+          setSeconds(prevSeconds => prevSeconds - 1)
+          if (minutes > 0) {
+            setMinutes(prevMinutes => prevMinutes - 1)
+          } else {
+            audioRef.current.play()
+            setMinutes(0)
+            setSeconds(0)
+            setIsRunning(true)
+            setOnBreak(false)
+            setSessionOrBreak(true)
+            setMinutes(sessionLength)
+          }
+        } else {
+          setSeconds(prevSeconds => prevSeconds - 1)
+        }
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isRunning, seconds, onBreak]);
+
+  function resetTimers() {
+    setMinutes(25)
+    setSeconds(0)
     setBreakLength(5)
     setSessionLength(25)
+    setIsRunning(false)
+    setOnBreak(false)
+    setSessionOrBreak(true)
+    setStartOrStop(false)
+    audioRef.current.load()
   }
 
   function breakLengthTime(e) {
-    if (e === '-') {
+    if (e === '-' && !isRunning) {
       if (breakLength > 1) {
         setBreakLength(prevBreak => prevBreak - 1)
       }
-    } else if (e === '+') {
+    } else if (e === '+' && !isRunning) {
       if (breakLength < 60) {
-      setBreakLength(prevBreak => prevBreak + 1)
+        setBreakLength(prevBreak => prevBreak + 1)
       }
     }
   }
 
   function sessionLengthTime(e) {
     if (e === '-') {
-      if (sessionLength > 1) {
+      if (sessionLength > 1 && !isRunning && !onBreak) {
         setSessionLength(prevSession => prevSession - 1)
+        setMinutes(prevMinutes => prevMinutes - 1)
       }
     } else if (e === '+') {
-      if (sessionLength < 60) {
-      setSessionLength(prevSession => prevSession + 1)
+      if (sessionLength < 60 && !isRunning) {
+        setSessionLength(prevSession => prevSession + 1)
+        setMinutes(prevMinutes => prevMinutes + 1)
       }
     }
   }
 
-  return(
+  function startStop() {
+    if(sessionOrBreak){
+      setIsRunning(prevIsRunning => !prevIsRunning)
+    } else if(!sessionOrBreak){
+      setOnBreak(prevOnBreak => !prevOnBreak)
+    }
+
+    setStartOrStop(prevStartOrStop => !prevStartOrStop)
+  }
+
+
+  return (
     <div>
       <div id="break-label">Break Length</div>
       <button
@@ -72,22 +140,15 @@ function MyTimer({expiryTimestamp}){
         Up
       </button>
 
-      <div id="timer-label">Session</div>
-      <div id="time-left">{minutes < 10 ? `0${minutes}` :minutes }:{seconds < 10 ? `0${seconds}` :seconds}</div>
+      <div id="timer-label">{!sessionOrBreak ? "Break" : "Session"}</div>
+      <div id="time-left">{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</div>
 
-      {isRunning && <button
+      <button
         id="start_stop"
-        onClick={pause}
+        onClick={() => startStop()}
       >
-        Stop
+        {!startOrStop  ? "Start" : "Stop"}
       </button>
-      }
-      {!isRunning && <button
-        id="start_stop"
-        onClick={start}
-      >
-        Start
-      </button>}
       <button
         id="reset"
         onClick={() => resetTimers()}
@@ -95,22 +156,10 @@ function MyTimer({expiryTimestamp}){
         Reset
       </button>
       
+      <audio id="beep" src="https://www.pacdv.com/sounds/interface_sound_effects/sound10.mp3" ref={audioRef}></audio>
+
     </div>
   )
 }
 
-function App() {
-
-    const time = new Date()
-    time.setSeconds(time.getSeconds()+1500)
-
-  return (
-    <>
-      <MyTimer expiryTimestamp={time} />
-    </>
-  )
-}
-
 export default App
-
-

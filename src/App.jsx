@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function App() {
 
@@ -10,12 +10,12 @@ function App() {
   const [onBreak, setOnBreak] = useState(false)
   const [sessionOrBreak, setSessionOrBreak] = useState(true)
   const [startOrStop, setStartOrStop] = useState(false)
-  const [beep, setBeep] = useState(false)
+
+  const audioRef = useRef(null)
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (isRunning) {
-        setBeep(false)
         //seconds drop to nil, resets to 60 seconds and the subtracts on every second
         if (seconds === 0) {
           setSeconds(60)
@@ -25,7 +25,7 @@ function App() {
             setMinutes(prevMinutes => prevMinutes - 1)
           //if seconds = nil
           } else if (seconds === 0 && minutes === 0 ) {
-            setBeep(true)
+            audioRef.current.play()
             setMinutes(0)
             setSeconds(0)
             setIsRunning(false)
@@ -37,14 +37,13 @@ function App() {
           setSeconds(prevSeconds => prevSeconds - 1)
         }
       } else if (onBreak) {
-        setBeep(false)
         if (seconds === 0) {
           setSeconds(60)
           setSeconds(prevSeconds => prevSeconds - 1)
           if (minutes > 0) {
             setMinutes(prevMinutes => prevMinutes - 1)
           } else {
-            setBeep(true)
+            audioRef.current.play()
             setMinutes(0)
             setSeconds(0)
             setIsRunning(true)
@@ -69,6 +68,7 @@ function App() {
     setOnBreak(false)
     setSessionOrBreak(true)
     setStartOrStop(false)
+    audioRef.current.load()
   }
 
   function breakLengthTime(e) {
@@ -155,6 +155,8 @@ function App() {
       >
         Reset
       </button>
+      
+      <audio id="beep" src="https://www.pacdv.com/sounds/interface_sound_effects/sound10.mp3" ref={audioRef}></audio>
 
     </div>
   )
