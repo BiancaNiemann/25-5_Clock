@@ -1,4 +1,79 @@
-*{
-  padding-left: 150px;
-  background-color: aquamarine;
+
+.body {
+  width: 100%;
+  font-family: fantasy;
+  background-color: #4c2c69;
+  height: 1000px;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: #82d173;
+  width: 500px;
+  margin: 0 auto;
+  padding: 30px 50px;
+  border-radius: 6px;
+}
+
+h1 {
+  font-size: 4rem;
+  color: #42253b;
+  text-shadow: 2px 2px 2px white;
+  text-align: center;
+  margin-bottom: 0;
+  margin-top: 0;
+  letter-spacing: 6px;
+}
+
+.lengths {
+  display: flex;
+  justify-content: space-around;
+}
+
+.break-session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 2rem;
+  height: 300px;
+  justify-content: space-around;
+}
+
+button {
+  background-color: #ABFAA9;
+  width: 65px;
+  height: 65px;
+  border: none;
+  box-shadow: 2px 2px 8px #4c2c69;
+  border-radius: 50%;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  color: #95A3b3;
+  text-shadow: 2px 2px 2px #ABFAA9;
+}
+
+.session-info {
+  text-align: center;
+  font-size: 4rem;
+}
+
+.start-restart {
+  display: flex;
+  justify-content: space-around;
+}
+
+.large-button {
+  width: 120px;
+  height: 120px;
+  font-size: 2rem;
+  font-weight: bold;
+  background-color: #4c2c69;
+  color: #ABFAA9;
 }
