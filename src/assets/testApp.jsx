@@ -23,8 +23,8 @@ function App() {
           //if seconds = nil and minutes are greater then nil then subtract one from minutes
           if (minutes > 0) {
             setMinutes(prevMinutes => prevMinutes - 1)
-          //if seconds = nil
-          } else if (seconds === 0 && minutes === 0 ) {
+            //if seconds = nil
+          } else if (seconds === 0 && minutes === 0) {
             audioRef.current.play()
             setMinutes(0)
             setSeconds(0)
@@ -98,9 +98,9 @@ function App() {
   }
 
   function startStop() {
-    if(sessionOrBreak){
+    if (sessionOrBreak) {
       setIsRunning(prevIsRunning => !prevIsRunning)
-    } else if(!sessionOrBreak){
+    } else if (!sessionOrBreak) {
       setOnBreak(prevOnBreak => !prevOnBreak)
     }
 
@@ -109,55 +109,71 @@ function App() {
 
 
   return (
-    <div>
-      <div id="break-label">Break Length</div>
-      <button
-        id="break-decrement"
-        onClick={() => breakLengthTime('-')}
-      >
-        Down
-      </button>
-      <div id="break-length">{breakLength}</div>
-      <button
-        id="break-increment"
-        onClick={() => breakLengthTime('+')}
-      >
-        Up
-      </button>
+    <div className="body">
+      <div className="container">
+        <h1>25 + 5 Clock</h1>
 
-      <div id="session-label">Session Length</div>
-      <button
-        id="session-decrement"
-        onClick={() => sessionLengthTime('-')}
-      >
-        down
-      </button>
-      <div id="session-length">{sessionLength}</div>
-      <button
-        id="session-increment"
-        onClick={() => sessionLengthTime('+')}
-      >
-        Up
-      </button>
+        <div className="lengths">
+          <div className="break-session">
+            <div id="break-label" className="title">Break Length</div>
+            <button
+              id="break-decrement"
+              onClick={() => breakLengthTime('-')}
+            >
+              <i class="fa-solid fa-circle-arrow-down fa-2xl"></i>
+            </button>
+            <div id="break-length">{breakLength}</div>
+            <button
+              id="break-increment"
+              onClick={() => breakLengthTime('+')}
+            >
+              <i class="fa-solid fa-circle-arrow-up fa-2xl"></i>
+            </button>
 
-      <div id="timer-label">{!sessionOrBreak ? "Break" : "Session"}</div>
-      <div id="time-left">{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</div>
+          </div>
 
-      <button
-        id="start_stop"
-        onClick={() => startStop()}
-      >
-        {!startOrStop  ? "Start" : "Stop"}
-      </button>
-      <button
-        id="reset"
-        onClick={() => resetTimers()}
-      >
-        Reset
-      </button>
-      
-      <audio id="beep" src="https://www.pacdv.com/sounds/interface_sound_effects/sound10.mp3" ref={audioRef}></audio>
+          <div className="break-session">
+            <div id="session-label" className="title">Session Length</div>
+            <button
+              id="session-decrement"
+              onClick={() => sessionLengthTime('-')}
+            >
+              <i class="fa-solid fa-circle-arrow-down fa-2xl"></i>
+            </button>
+            <div id="session-length">{sessionLength}</div>
+            <button
+              id="session-increment"
+              onClick={() => sessionLengthTime('+')}
+            >
+              <i class="fa-solid fa-circle-arrow-up fa-2xl"></i>
+            </button>
+          </div>
+        </div>
 
+        <div className="session-info">
+          <div id="timer-label" className="title">{!sessionOrBreak ? "Break" : "Session"}</div>
+          <div id="time-left">{minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</div>
+
+          <div className="start-restart">
+            <button
+            className="large-button"
+              id="start_stop"
+              onClick={() => startStop()}
+            >
+              {!startOrStop ? "Start" : "Stop"}
+            </button>
+            <button
+            className="large-button"
+              id="reset"
+              onClick={() => resetTimers()}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+        <audio id="beep" src="https://www.pacdv.com/sounds/interface_sound_effects/sound10.mp3" ref={audioRef}></audio>
+
+      </div>
     </div>
   )
 }
